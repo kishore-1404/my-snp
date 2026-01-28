@@ -33,4 +33,12 @@ export class UserResolver {
     async deleteUser(@Args('id') id: string): Promise<User | null> {
         return this.usersService.remove(id);
     }
+
+    @Mutation(() => User, { name: 'updateuserpreferences' })
+    async updateUserPreferences(
+        @Args('id') id: string,
+        @Args('preferences') preferences: any
+    ): Promise<User | null> {
+        return this.usersService.updatePreferences(id, preferences);
+    }
 }

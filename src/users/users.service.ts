@@ -33,4 +33,12 @@ export class UsersService {
     async remove(id: string): Promise<User | null> {
         return this.userModel.findByIdAndDelete(id).exec();
     }
+
+    async updatePreferences(id: string, preferences: any): Promise<User | null> {
+        return this.userModel.findByIdAndUpdate(
+            id,
+            { preferences },
+            { new: true }
+        ).exec();
+    }
 }
