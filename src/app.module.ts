@@ -11,6 +11,9 @@ import { UsersModule } from './users/users.module';
 import { PostsModule } from './posts/posts.module';
 import { CommentsModule } from './comments/comments.module';
 import { ReactionsModule } from './reactions/reactions.module';
+import { NotificationsService } from './notifications/notifications.service';
+// import { NotificationsResolver } from './notifications/resolvers/notifications.resolver';
+import { NotificationsResolver } from './notifications/resolvers/notifications.resolver';
 
 @Module({
   imports: [
@@ -21,13 +24,24 @@ import { ReactionsModule } from './reactions/reactions.module';
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       sortSchema: true,
       playground: true,
-    }),
+      subscriptions: {
+        'graphql-ws': {
+          onConnect: (context) => {
+            console.log('Client connected (graphql-ws)');
+            // Handle Connection
+          },
+          onDisconnect: (context) => {
+            console.log('Client disconnected (graphql-ws)');
+            // Handle Disconnection
+          }
+        }
+    }}),
     UsersModule,
     PostsModule,
     CommentsModule,
     ReactionsModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, NotificationsService, NotificationsResolver],
 })
 export class AppModule {}
