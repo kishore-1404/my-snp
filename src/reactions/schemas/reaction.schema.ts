@@ -33,3 +33,5 @@ export class Reaction extends Document {
     updateAt: Date;
     
 }
+
+export const ReactionSchema = SchemaFactory.createForClass(Reaction);

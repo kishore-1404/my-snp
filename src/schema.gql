@@ -1,0 +1,151 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Comment {
+  author: User!
+  content: String!
+  createdAt: DateTime!
+  isDeleted: Boolean!
+  post: Post!
+  updateAt: DateTime!
+}
+
+input CreateCommentDto {
+  authorId: String!
+  content: String!
+  postId: String!
+}
+
+input CreateNotificationDto {
+  category: String!
+  message: String!
+  recipientId: String!
+}
+
+input CreatePostDto {
+  authorId: String!
+  content: String!
+}
+
+input CreateReactionDto {
+  content: String!
+  postId: String!
+  userId: String!
+}
+
+input CreateUserDto {
+  bio: String
+  email: String!
+  password: String!
+  username: String!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+"""
+The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON
+
+type Mutation {
+  createcomment(createCommentDto: CreateCommentDto!): Comment!
+  createnotification(createNotificationDto: CreateNotificationDto!): Notification!
+  createpost(createPostDto: CreatePostDto!): Post!
+  createreaction(createReactionDto: CreateReactionDto!): Reaction!
+  createuser(createUserDto: CreateUserDto!): User!
+  deletecomment(id: String!): Comment!
+  deletepost(id: String!): Post!
+  deleteuser(id: String!): User!
+  updatecomment(updateCommentDto: UpdateCommentDto!): Comment!
+  updatepost(updatePostDto: UpdatePostDto!): Post!
+  updatereaction(updateReactionDto: UpdateReactionDto!): Reaction!
+  updateuser(updateUserDto: UpdateUserDto!): User!
+  updateuserpreferences(id: String!, preferences: PreferencesInput!): User!
+}
+
+type Notification {
+  createdAt: DateTime!
+  isRead: Boolean!
+  message: String!
+  recipient: User!
+}
+
+type Post {
+  author: User!
+  content: String!
+  createdAt: DateTime!
+  isDeleted: Boolean!
+  updateAt: DateTime!
+}
+
+input PreferencesInput {
+  keys: [String!]!
+  values: [Boolean!]!
+}
+
+type Query {
+  getcomment(id: String!): Comment!
+  getcomments: [Comment!]!
+  getpost(id: String!): Post!
+  getposts: [Post!]!
+  getreaction(id: String!): Reaction!
+  getreactions: [Reaction!]!
+  getuser(id: String!): User!
+  getusers: [User!]!
+}
+
+type Reaction {
+  createdAt: DateTime!
+  post: Post!
+  type: String!
+  updateAt: DateTime!
+  user: User!
+}
+
+type Subscription {
+  notificationAdded: Notification!
+  postCreated: Post!
+  postUpdated: Post!
+}
+
+input UpdateCommentDto {
+  authorId: String
+  content: String
+  id: ID!
+  postId: String
+}
+
+input UpdatePostDto {
+  authorId: String
+  content: String
+  id: ID!
+}
+
+input UpdateReactionDto {
+  content: String
+  id: ID!
+  postId: String
+  userId: String
+}
+
+input UpdateUserDto {
+  bio: String
+  email: String
+  id: ID!
+  password: String
+  username: String
+}
+
+type User {
+  bio: String
+  createdAt: DateTime!
+  email: String!
+  password: String!
+  preferences: JSON
+  updateAt: DateTime!
+  username: String!
+}

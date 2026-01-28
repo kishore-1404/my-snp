@@ -10,6 +10,10 @@ import { User } from 'src/users/schemas/user.schema';
 @Schema()
 @ObjectType()
 export class Post extends Document {
+    @Field(() => ID)
+    get id() {
+        return this._id.toString();
+    }
 
     @Prop({ required: true })
     @Field()
@@ -33,3 +37,5 @@ export class Post extends Document {
     isDeleted: boolean;
 
 }
+
+export const PostSchema = SchemaFactory.createForClass(Post);

@@ -1,3 +1,4 @@
+import { PreferencesInput } from '../dto/preferences.input';
 
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { UsersService } from '../users.service';
@@ -37,8 +38,13 @@ export class UserResolver {
     @Mutation(() => User, { name: 'updateuserpreferences' })
     async updateUserPreferences(
         @Args('id') id: string,
-        @Args('preferences') preferences: any
+        @Args('preferences', { type: () => PreferencesInput }) preferences: PreferencesInput
     ): Promise<User | null> {
-        return this.usersService.updatePreferences(id, preferences);
+        // Convert PreferencesInput to a Map<string, boolean>
+        const preferencesMap = new Map<string, boolean>();
+        preferences.keys.forEach((key, idx) => {
+            preferencesMap.set(key, preferences.values[idx]);
+        });
+        return this.usersService.updatePreferences(id, preferencesMap);
     }
 }

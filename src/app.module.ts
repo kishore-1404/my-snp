@@ -11,9 +11,9 @@ import { UsersModule } from './users/users.module';
 import { PostsModule } from './posts/posts.module';
 import { CommentsModule } from './comments/comments.module';
 import { ReactionsModule } from './reactions/reactions.module';
-import { NotificationsService } from './notifications/notifications.service';
+// import { NotificationsService } from './notifications/notifications.service';
 // import { NotificationsResolver } from './notifications/resolvers/notifications.resolver';
-import { NotificationsResolver } from './notifications/resolvers/notifications.resolver';
+import { NotificationsModule } from './notifications/notifications.module';
 
 @Module({
   imports: [
@@ -25,23 +25,17 @@ import { NotificationsResolver } from './notifications/resolvers/notifications.r
       sortSchema: true,
       playground: true,
       subscriptions: {
-        'graphql-ws': {
-          onConnect: (context) => {
-            console.log('Client connected (graphql-ws)');
-            // Handle Connection
-          },
-          onDisconnect: (context) => {
-            console.log('Client disconnected (graphql-ws)');
-            // Handle Disconnection
-          }
-        }
-    }}),
+        'graphql-ws': true,
+      }
+    }),
+
     UsersModule,
     PostsModule,
     CommentsModule,
     ReactionsModule,
+    NotificationsModule,
   ],
   controllers: [AppController],
-  providers: [AppService, NotificationsService, NotificationsResolver],
+  providers: [AppService],
 })
 export class AppModule {}

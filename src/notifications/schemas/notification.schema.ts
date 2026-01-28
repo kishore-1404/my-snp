@@ -10,6 +10,10 @@ import { User } from 'src/users/schemas/user.schema';
 @Schema()
 @ObjectType()
 export class Notification extends Document {
+    @Field(() => ID)
+    get id() {
+        return this._id.toString();
+    }
     @Prop({ required: true })
     @Field()
     message: string;
