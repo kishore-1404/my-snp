@@ -12,4 +12,9 @@ export class CreateNotificationDto {
     @IsNotEmpty()
     @IsString()
     message: string;
+
+    @Field()
+    @IsNotEmpty()
+    @IsString()
+    category: string;
 }

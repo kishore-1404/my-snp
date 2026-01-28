@@ -12,16 +12,20 @@ export class NotificationsResolver {
     
     @Mutation(() => Notification, { name: 'createnotification' })
     async createNotification(@Args('createNotificationDto') createNotificationDto: CreateNotificationDto): Promise<Notification> {
-        const notification = await this.notificationsService.create(createNotificationDto);
+        const notification = await this.notificationsService.createNotification(
+            createNotificationDto
+        );
         pubSub.publish('notificationCreated', { notificationCreated: notification });
         return notification;
     }
 
     @Subscription(returns => Notification,{
-        filter: (payload, variables) => 
-            payload.notificationCreated.recipientId === variables.recipientId,
+        filter: (payload, variables, context) => {
+            const userPreferences = context.user.preferences;
+            return userPreferences.get(payload.notification.category) === true;
+        }
     })
-    notificationCreated(@Args('recipientId') recipientId: string) { 
-        return pubSub.asyncIterator('notificationCreated');
+    notificationAdded() {
+        return pubSub.asyncIterator('notificationAdded');
     }
 }

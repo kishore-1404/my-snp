@@ -27,9 +27,9 @@ export class User extends Document {
     @Field({ nullable: true })
     bio?: string;
 
-    @Prop({ type: [String], default: [] })
-    @Field(() => [String], { nullable: 'itemsAndList' })
-    preferences: string[];
+    @Prop({type: Map, of:Boolean, default: {}})
+    @Field(() => Map)
+    preferences: Map<string, boolean>;
 
     @Prop({ default: Date.now , immutable: true,required:true})
     @Field()
