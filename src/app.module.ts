@@ -8,6 +8,9 @@ import {GraphQLModule} from "@nestjs/graphql";
 import { ApolloDriver,ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
 import { UsersModule } from './users/users.module';
+import { PostsModule } from './posts/posts.module';
+import { CommentsModule } from './comments/comments.module';
+import { ReactionsModule } from './reactions/reactions.module';
 
 @Module({
   imports: [
@@ -20,6 +23,9 @@ import { UsersModule } from './users/users.module';
       playground: true,
     }),
     UsersModule,
+    PostsModule,
+    CommentsModule,
+    ReactionsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
