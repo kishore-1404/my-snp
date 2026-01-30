@@ -4,7 +4,7 @@ import { Model } from 'mongoose';
 import { User } from './schemas/user.schema';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-
+import { hash } from 'bcrypt';
 
 @Injectable()
 export class UsersService {
@@ -25,11 +25,17 @@ export class UsersService {
 
     async create(createUserDto: CreateUserDto): Promise<User> {
         const createdUser = new this.userModel(createUserDto);
+        // Hash the password before saving
+        createdUser.password = await hash(createUserDto.password, 10);
         return createdUser.save();
     }
     
     async update(updateUserDto: UpdateUserDto): Promise<User | null> {
         const { id, ...updateData } = updateUserDto;
+        // If password is being updated, hash it
+        if (updateData.password) {
+            updateData.password = await hash(updateData.password, 10);
+        }
         return this.userModel.findByIdAndUpdate(id, updateData, { new: true }).exec();
     }
 
