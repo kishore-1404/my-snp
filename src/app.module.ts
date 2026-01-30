@@ -6,6 +6,7 @@ import {ConfigModule} from "@nestjs/config";
 import {MongooseModule} from "@nestjs/mongoose";
 import {GraphQLModule} from "@nestjs/graphql";
 import { ApolloDriver,ApolloDriverConfig } from '@nestjs/apollo';
+import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 import { join } from 'path';
 import { UsersModule } from './users/users.module';
 import { PostsModule } from './posts/posts.module';
@@ -23,10 +24,17 @@ import { NotificationsModule } from './notifications/notifications.module';
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       sortSchema: true,
-      playground: true,
+      playground: false,
+      plugins: [ApolloServerPluginLandingPageLocalDefault()],
       subscriptions: {
         'graphql-ws': true,
-      }
+      },
+      context: ({ req, connectionParams }) => {
+        // IMPORTANT for subscriptions
+        return {
+          user: connectionParams?.user || req?.user,
+        };
+      },
     }),
 
     UsersModule,

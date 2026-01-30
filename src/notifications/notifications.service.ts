@@ -20,7 +20,7 @@ export class NotificationsService {
         }
         // If you want to check user preferences, add logic here
         const notification = new this.notificationModel({
-            user: createNotificationDto.recipientId,
+            recipient: user,
             message: createNotificationDto.message,
             category: createNotificationDto.category,
         });

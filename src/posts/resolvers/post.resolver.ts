@@ -6,7 +6,7 @@ import { UpdatePostDto } from '../dto/update-post.dto';
 import { PubSub } from "graphql-subscriptions";
 
 // Use 'any' type to avoid type error with asyncIterator
-const pubSub: any = new PubSub();
+const pubSub = new PubSub();
 
 @Resolver(of => Post)
 export class PostResolver {
@@ -29,7 +29,7 @@ export class PostResolver {
 
     @Subscription(() => Post)
     postCreated() {
-        return pubSub.asyncIterator('postCreated');
+        return pubSub.asyncIterableIterator('postCreated');
     }
 
     @Mutation(() => Post, { name: 'updatepost' })
@@ -39,7 +39,7 @@ export class PostResolver {
 
     @Subscription(() => Post)
     postUpdated() {
-        return pubSub.asyncIterator('postUpdated');
+        return pubSub.asyncIterableIterator('postUpdated');
     }
     
     @Mutation(() => Post, { name: 'deletepost' })

@@ -1,10 +1,13 @@
-import { PreferencesInput } from '../dto/preferences.input';
-
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { UsersService } from '../users.service';
 import { User } from '../schemas/user.schema';
-import { CreateUserDto } from '../dto/create-user.dto';
+import { CreateUserInput } from '../input/create-user.input';
+import { UpdateUserInput } from '../input/update-user.input';
+import { PreferencesInput } from '../input/preferences.input';
+
 import { UpdateUserDto } from '../dto/update-user.dto';
+import { CreateUserDto } from '../dto/create-user.dto';
+
 
 @Resolver(of => User)
 export class UserResolver {
@@ -20,31 +23,58 @@ export class UserResolver {
         return this.usersService.findOne(id);
     }
 
-    @Mutation(() => User, { name: 'createuser' })
-    async createUser(@Args('createUserDto') createUserDto: CreateUserDto): Promise<User> {
-        return this.usersService.create(createUserDto);
+    @Mutation(() => User, { name: 'createUser' })
+    async createUser(@Args('createUserInput') createUserInput: CreateUserInput): Promise<User> {
+        const { preferences, ...userData } = createUserInput;
+        let preferencesObj: Record<string, boolean> | undefined;
+
+        if (preferences) {
+            preferencesObj = this.mapPreferences(preferences);
+        }
+
+        const dto: CreateUserDto = {
+            ...userData,
+            preferences: preferencesObj,
+        };
+        return this.usersService.create(dto);
     }
 
-    @Mutation(() => User, { name: 'updateuser' })
-    async updateUser(@Args('updateUserDto') updateUserDto: UpdateUserDto): Promise<User | null> {
+    private mapPreferences(preferences: PreferencesInput): Record<string, boolean> {
+        const preferencesObj: Record<string, boolean> = {};
+        preferences.keys.forEach((key, idx) => {
+            preferencesObj[key] = preferences.values[idx];
+        });
+        return preferencesObj;
+    }
+
+    @Mutation(() => User, { name: 'updateUser' })
+    async updateUser(@Args('updateUserInput') updateUserInput: UpdateUserInput): Promise<User | null> {
+        const { preferences, ...userData } = updateUserInput;
+        let preferencesObj: Record<string, boolean> | undefined;
+
+        if (preferences) {
+            preferencesObj = this.mapPreferences(preferences);
+        }
+
+        const updateUserDto: UpdateUserDto = {
+            ...userData,
+            preferences: preferencesObj,
+        };
         return this.usersService.update(updateUserDto);
     }
     
-    @Mutation(() => User, { name: 'deleteuser' })
+    @Mutation(() => User, { name: 'deleteUser' })
     async deleteUser(@Args('id') id: string): Promise<User | null> {
         return this.usersService.remove(id);
     }
 
-    @Mutation(() => User, { name: 'updateuserpreferences' })
+    @Mutation(() => User, { name: 'updateUserPreferences' })
     async updateUserPreferences(
         @Args('id') id: string,
         @Args('preferences', { type: () => PreferencesInput }) preferences: PreferencesInput
     ): Promise<User | null> {
         // Convert PreferencesInput to a Map<string, boolean>
-        const preferencesMap = new Map<string, boolean>();
-        preferences.keys.forEach((key, idx) => {
-            preferencesMap.set(key, preferences.values[idx]);
-        });
+        const preferencesMap = this.mapPreferences(preferences);
         return this.usersService.updatePreferences(id, preferencesMap);
     }
 }

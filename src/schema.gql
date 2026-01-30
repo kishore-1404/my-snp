@@ -34,10 +34,11 @@ input CreateReactionDto {
   userId: String!
 }
 
-input CreateUserDto {
+input CreateUserInput {
   bio: String
   email: String!
   password: String!
+  preferences: PreferencesInput
   username: String!
 }
 
@@ -52,23 +53,24 @@ The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://
 scalar JSON
 
 type Mutation {
+  createNotification(createNotificationDto: CreateNotificationDto!): Notification!
+  createUser(createUserInput: CreateUserInput!): User!
   createcomment(createCommentDto: CreateCommentDto!): Comment!
-  createnotification(createNotificationDto: CreateNotificationDto!): Notification!
   createpost(createPostDto: CreatePostDto!): Post!
   createreaction(createReactionDto: CreateReactionDto!): Reaction!
-  createuser(createUserDto: CreateUserDto!): User!
+  deleteUser(id: String!): User!
   deletecomment(id: String!): Comment!
   deletepost(id: String!): Post!
-  deleteuser(id: String!): User!
+  updateUser(updateUserInput: UpdateUserInput!): User!
+  updateUserPreferences(id: String!, preferences: PreferencesInput!): User!
   updatecomment(updateCommentDto: UpdateCommentDto!): Comment!
   updatepost(updatePostDto: UpdatePostDto!): Post!
   updatereaction(updateReactionDto: UpdateReactionDto!): Reaction!
-  updateuser(updateUserDto: UpdateUserDto!): User!
-  updateuserpreferences(id: String!, preferences: PreferencesInput!): User!
 }
 
 type Notification {
   createdAt: DateTime!
+  id: ID!
   isRead: Boolean!
   message: String!
   recipient: User!
@@ -78,6 +80,7 @@ type Post {
   author: User!
   content: String!
   createdAt: DateTime!
+  id: ID!
   isDeleted: Boolean!
   updateAt: DateTime!
 }
@@ -107,7 +110,7 @@ type Reaction {
 }
 
 type Subscription {
-  notificationAdded: Notification!
+  notificationAdded(recipientId: String!): Notification!
   postCreated: Post!
   postUpdated: Post!
 }
@@ -132,11 +135,12 @@ input UpdateReactionDto {
   userId: String
 }
 
-input UpdateUserDto {
+input UpdateUserInput {
   bio: String
   email: String
   id: ID!
   password: String
+  preferences: PreferencesInput
   username: String
 }
 
@@ -144,6 +148,7 @@ type User {
   bio: String
   createdAt: DateTime!
   email: String!
+  id: ID!
   password: String!
   preferences: JSON
   updateAt: DateTime!
