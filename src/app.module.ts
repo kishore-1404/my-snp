@@ -15,6 +15,10 @@ import { ReactionsModule } from './reactions/reactions.module';
 // import { NotificationsService } from './notifications/notifications.service';
 // import { NotificationsResolver } from './notifications/resolvers/notifications.resolver';
 import { NotificationsModule } from './notifications/notifications.module';
+import { AuthModule } from './auth/auth.module';
+
+import { APP_GUARD } from '@nestjs/core';
+import { AuthGuard } from './auth/auth.guard';
 
 @Module({
   imports: [
@@ -29,21 +33,22 @@ import { NotificationsModule } from './notifications/notifications.module';
       subscriptions: {
         'graphql-ws': true,
       },
-      context: ({ req, connectionParams }) => {
-        // IMPORTANT for subscriptions
-        return {
-          user: connectionParams?.user || req?.user,
-        };
-      },
-    }),
+      context: ({ req, res }) => ({ req, res })
+      }),
 
     UsersModule,
     PostsModule,
     CommentsModule,
     ReactionsModule,
     NotificationsModule,
+    AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService,
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
+},
+  ],
 })
 export class AppModule {}

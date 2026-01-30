@@ -52,6 +52,11 @@ The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://
 """
 scalar JSON
 
+input LoginInputDto {
+  password: String!
+  username: String!
+}
+
 type Mutation {
   createNotification(createNotificationDto: CreateNotificationDto!): Notification!
   createUser(createUserInput: CreateUserInput!): User!
@@ -61,6 +66,7 @@ type Mutation {
   deleteUser(id: String!): User!
   deletecomment(id: String!): Comment!
   deletepost(id: String!): Post!
+  login(loginInput: LoginInputDto!): String!
   updateUser(updateUserInput: UpdateUserInput!): User!
   updateUserPreferences(id: String!, preferences: PreferencesInput!): User!
   updatecomment(updateCommentDto: UpdateCommentDto!): Comment!
@@ -91,6 +97,7 @@ input PreferencesInput {
 }
 
 type Query {
+  getProfile: String!
   getcomment(id: String!): Comment!
   getcomments: [Comment!]!
   getpost(id: String!): Post!

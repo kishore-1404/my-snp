@@ -7,22 +7,25 @@ import { PreferencesInput } from '../input/preferences.input';
 
 import { UpdateUserDto } from '../dto/update-user.dto';
 import { CreateUserDto } from '../dto/create-user.dto';
-
+import { Public } from '../../common/decorators/public.decorator';
 
 @Resolver(of => User)
 export class UserResolver {
     constructor(private readonly usersService: UsersService) {}
     
+    @Public()
     @Query(() => [User], { name: 'getusers' })
     async users(): Promise<User[]> {
         return this.usersService.findAll();
     }
 
+    @Public()
     @Query(() => User, { name: 'getuser' })
     async user(@Args('id') id: string): Promise<User | null> {
         return this.usersService.findOne(id);
     }
 
+    @Public()
     @Mutation(() => User, { name: 'createUser' })
     async createUser(@Args('createUserInput') createUserInput: CreateUserInput): Promise<User> {
         const { preferences, ...userData } = createUserInput;
