@@ -19,7 +19,10 @@ import { AuthModule } from './auth/auth.module';
 
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './auth/auth.guard';
-
+import { registerEnumType } from '@nestjs/graphql';
+import { Role } from './common/roles.enum';
+// import { registerEnumType } from '@nestjs/graphql';
+registerEnumType(Role, { name: 'Role' });
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),

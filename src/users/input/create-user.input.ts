@@ -1,7 +1,7 @@
 import { InputType, Field } from '@nestjs/graphql';
 import { PreferencesInput } from './preferences.input';
 import { IsNotEmpty, IsString, ValidateNested } from 'class-validator';
-
+import { Role } from 'src/common/roles.enum';
 @InputType()
 export class CreateUserInput {
     @Field()
@@ -26,4 +26,7 @@ export class CreateUserInput {
     @Field(() => PreferencesInput, { nullable: true })
     @ValidateNested()
     preferences?: PreferencesInput;
+
+    @Field(() => [Role], { nullable: true })
+    roles?: Role[];
 }

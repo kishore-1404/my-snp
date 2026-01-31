@@ -39,6 +39,7 @@ input CreateUserInput {
   email: String!
   password: String!
   preferences: PreferencesInput
+  roles: [Role!]
   username: String!
 }
 
@@ -116,6 +117,11 @@ type Reaction {
   user: User!
 }
 
+enum Role {
+  Admin
+  User
+}
+
 type Subscription {
   notificationAdded(recipientId: String!): Notification!
   postCreated: Post!
@@ -148,6 +154,7 @@ input UpdateUserInput {
   id: ID!
   password: String
   preferences: PreferencesInput
+  roles: [Role!]
   username: String
 }
 
@@ -157,6 +164,7 @@ type User {
   email: String!
   id: ID!
   preferences: JSON
+  roles: [Role!]!
   updateAt: DateTime!
   username: String!
 }
