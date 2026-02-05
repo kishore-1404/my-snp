@@ -22,6 +22,7 @@ import { AuthGuard } from './auth/guards/auth.guard';
 import { registerEnumType } from '@nestjs/graphql';
 import { Role } from './common/roles.enum';
 // import { registerEnumType } from '@nestjs/graphql';
+import { FollowsModule } from './follows/follows.module';
 registerEnumType(Role, { name: 'Role' });
 @Module({
   imports: [
@@ -45,6 +46,7 @@ registerEnumType(Role, { name: 'Role' });
     // ReactionsModule,
     NotificationsModule,
     AuthModule,
+    FollowsModule,
   ],
   controllers: [AppController],
   providers: [AppService,

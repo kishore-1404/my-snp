@@ -8,12 +8,14 @@ type CommentType {
   createdAt: DateTime!
   id: ID!
   isDeleted: Boolean!
+  parentComment: ID
   post: PostType!
   updatedAt: DateTime!
 }
 
 input CreateCommentDto {
   content: String!
+  parentCommentId: String
   postId: String!
 }
 
@@ -112,6 +114,7 @@ type Subscription {
 input UpdateCommentDto {
   content: String
   id: ID!
+  parentCommentId: String
   postId: String
 }
 

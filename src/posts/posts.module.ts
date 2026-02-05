@@ -12,5 +12,6 @@ import { UsersModule } from 'src/users/users.module';
     UsersModule,
   ],
   providers: [PostResolver, PostsService, PostsMapper],
+  exports: [PostsService, PostsMapper],
 })
 export class PostsModule {}
