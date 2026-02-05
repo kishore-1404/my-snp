@@ -10,6 +10,7 @@ export class CommentsMapper {
     commentType.content = comment.content;
     commentType.author = comment.author; // This will be resolved to UserType in the resolver
     commentType.post = comment.post; // This will be resolved to PostType in the resolver
+    commentType.parentComment = comment.parentComment ? comment.parentComment.toString() : null;
     commentType.createdAt = comment.createdAt;
     commentType.updatedAt = comment.updatedAt;
     commentType.isDeleted = comment.isDeleted;

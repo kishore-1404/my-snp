@@ -13,6 +13,10 @@ export class Comment extends Document {
     @Prop({ type: Types.ObjectId, ref: 'Post', required: true })
     post: Types.ObjectId;
 
+    // Parent comment reference for nested comments
+    @Prop({ type: Types.ObjectId, ref: 'Comment', default: null })
+    parentComment: Types.ObjectId | null;
+
     @Prop({ default: Date.now, immutable: true, required: true })
     createdAt: Date;
 

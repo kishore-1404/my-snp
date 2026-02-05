@@ -17,6 +17,9 @@ export class CommentType {
   @Field(() => PostType)
   post: PostType| Types.ObjectId;
 
+  @Field(() => ID, { nullable: true })
+  parentComment?: string | null;
+
   @Field()
   createdAt: Date;
 

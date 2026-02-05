@@ -52,18 +52,5 @@ export class CommentsService {
             { new: true }
         ).exec();
     }
-
-    // Helper to map Comment (Mongoose) to CommentType (GraphQL)
-    // toCommentType(comment: any): CommentType {
-    //     return {
-    //         id: comment._id.toString(),
-    //         content: comment.content,
-    //         author: comment.author,
-    //         post: comment.post,
-    //         createdAt: comment.createdAt,
-    //         updatedAt: comment.updatedAt,
-    //         isDeleted: comment.isDeleted,
-    //     };
-    // }
 }
 

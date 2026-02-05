@@ -8,11 +8,20 @@ import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { CommentsMapper } from '../comments.mapper';
 import { UserType } from 'src/users/graphql/user.type';
 import { PostType } from 'src/posts/graphql/post.type';
+import { PostsService } from 'src/posts/posts.service';
+import { PostsMapper } from 'src/posts/posts.mapper';
+import { UsersService } from 'src/users/users.service';
+import { UsersMapper } from 'src/users/users.mapper';
 @Resolver(of => CommentType)
 export class CommentResolver {
     constructor(
         private readonly commentsService: CommentsService,
-        private readonly commentsMapper: CommentsMapper) {}
+        private readonly commentsMapper: CommentsMapper,
+        private readonly postsService: PostsService,
+        private readonly postsMapper: PostsMapper,
+        private readonly usersService: UsersService,
+        private readonly usersMapper: UsersMapper
+        ) {}
     
     @Query(() => [CommentType], { name: 'getcomments' })
     async comments(): Promise<CommentType[]> {
@@ -48,8 +57,8 @@ export class CommentResolver {
         if (typeof comment.author === 'object' && 'id' in comment.author) {
             return comment.author as UserType;
         }
-        const user = await this.commentsService['usersService'].findOne(comment.author as string);
-        return user ? this.commentsService['usersMapper'].toUserType(user) : null;
+        const user = await this.usersService.findOne(comment.author as string);
+        return user ? this.usersMapper.toUserType(user) : null;
     }
 
     @ResolveField(() => PostType)
@@ -57,8 +66,8 @@ export class CommentResolver {
         if (typeof comment.post === 'object' && 'id' in comment.post) {
             return comment.post as PostType;
         }
-        const post = await this.commentsService['postsService'].findOne(comment.post as string);
-        return post ? this.commentsService['postsMapper'].toPostType(post) : null;
+        const post = await this.postsService.findOne(comment.post as string);
+        return post ? this.postsMapper.toPostType(post) : null;
     }   
 
 }   

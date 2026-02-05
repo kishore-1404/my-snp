@@ -12,4 +12,8 @@ export class CreateCommentDto {
     @IsNotEmpty()
     @IsString()
     postId: string;
+
+    @Field({ nullable: true })
+    @IsString()
+    parentCommentId?: string;
 }
