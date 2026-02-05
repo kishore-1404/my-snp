@@ -43,6 +43,18 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+type FollowType {
+  createdAt: DateTime!
+  follower(followId: String!): UserType!
+  following(followId: String!): UserType!
+  id: ID!
+  updatedAt: DateTime!
+}
+
+input FollowUserDto {
+  followingId: String!
+}
+
 """
 The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
 """
@@ -61,7 +73,9 @@ type Mutation {
   deleteUser: UserType!
   deletecomment(id: String!): CommentType!
   deletepost(id: String!): PostType!
+  followUser(followUserDto: FollowUserDto!): FollowType!
   login(loginInput: LoginInputDto!): String!
+  unfollowUser(followingId: String!): FollowType
   updateUser(updateUserInput: UpdateUserInput!): UserType!
   updateUserPreferences(preferences: PreferencesInput!): UserType!
   updatecomment(updateCommentDto: UpdateCommentDto!): CommentType!
@@ -91,6 +105,8 @@ input PreferencesInput {
 }
 
 type Query {
+  getFollowers(userId: String!): [FollowType!]!
+  getFollowing(userId: String!): [FollowType!]!
   getProfile: String!
   getcomment(id: String!): CommentType!
   getcomments: [CommentType!]!
