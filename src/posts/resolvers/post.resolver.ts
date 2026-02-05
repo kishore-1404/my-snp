@@ -9,6 +9,7 @@ import { UsersService } from 'src/users/users.service';
 import { UserType } from 'src/users/graphql/user.type';
 import { UsersMapper } from 'src/users/users.mapper';
 import { PostsMapper } from '../posts.mapper';
+import { FeedPostType,FeedResponse } from '../graphql/feed-post.type';
 // Use 'any' type to avoid type error with asyncIterator
 const pubSub = new PubSub();
 
@@ -76,5 +77,19 @@ export class PostResolver {
         // Otherwise, fetch user by ID
         const user = await this.usersService.findOne(post.author.toString());
         return user ? this.usersMapper.toUserType(user) : null;
+    }
+
+    @Query(() => FeedResponse, { name: 'feed' })
+    async feed(
+        @CurrentUser() user: any,
+        @Args('page', { type: () => Number, defaultValue: 1 }) page: number,
+        @Args('limit', { type: () => Number, defaultValue: 20 }) limit: number
+    ): Promise<FeedResponse> {
+        const result = await this.postsService.getFeed(user._id, page, limit);
+        return {
+            posts: Array.isArray(result.posts) ? result.posts.map(p => this.postsMapper.toFeedPostType(p)) : [],
+            total: result.total,
+            hasMore: result.hasMore
+        };
     }
 }
