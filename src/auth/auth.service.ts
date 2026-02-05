@@ -1,8 +1,10 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, ExecutionContext } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { LoginInputDto } from './input/login.input';
 import { compare } from 'bcrypt';
+
+import { GqlExecutionContext } from '@nestjs/graphql';
 
 
 @Injectable()
@@ -21,10 +23,29 @@ export class AuthService {
         if (!isPasswordValid) {
             throw new UnauthorizedException('Invalid credentials');
         }
-        const payload = { username: user.username, sub: user.id };
+        const payload = { username: user.username, sub: user._id.toString() };
         // const access_token = await this.jwtService.signAsync(payload);
         return { 
             access_token: await this.jwtService.signAsync(payload),
         }
     }
+
+    // Get user from context
+    async getUser(context: ExecutionContext): Promise<{id: string, username: string}> {
+        const ctx = GqlExecutionContext.create(context);
+        const req: Request & { user?: any } = ctx.getContext().req;
+
+        const authHeader = req.headers['authorization'];
+        if (!authHeader) {
+            throw new UnauthorizedException('No authorization header found');
+        }
+
+        const [, token] = authHeader.split(' ');
+        try {
+            const decoded = await this.jwtService.verifyAsync(token);
+            return { id: decoded.sub, username: decoded.username };
+        } catch (err) {
+            throw new UnauthorizedException('Invalid or expired token');
+        }
+    }   
 }

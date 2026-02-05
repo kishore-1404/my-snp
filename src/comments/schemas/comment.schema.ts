@@ -5,7 +5,7 @@ import {
 } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { Field, ID, ObjectType } from '@nestjs/graphql';
-import { User } from 'src/users/schemas/user.schema';
+import { UserType } from 'src/users/graphql/user.type'; 
 import { Post } from 'src/posts/schemas/post.schema';
 
 @Schema()
@@ -17,8 +17,8 @@ export class Comment extends Document {
     content: string;
     
     @Prop({ type: String, ref: 'User', required: true })
-    @Field(() => User)
-    author: User;
+    @Field(() => UserType)
+    author: UserType;
         
     @Prop({ type: String, ref: 'Post', required: true })
     @Field(() => Post)

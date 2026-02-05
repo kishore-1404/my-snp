@@ -5,8 +5,8 @@ import {
 } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { Field, ID, ObjectType } from '@nestjs/graphql';
-import { User } from 'src/users/schemas/user.schema';
 import { Post } from 'src/posts/schemas/post.schema';
+import { UserType } from 'src/users/graphql/user.type';
 
 @Schema()
 @ObjectType()
@@ -17,8 +17,8 @@ export class Reaction extends Document {
     type: string;
     
     @Prop({ type: String, ref: 'User', required: true })
-    @Field(() => User)
-    user: User;
+    @Field(() => UserType)
+    user: UserType;
         
     @Prop({ type: String, ref: 'Post', required: true })
     @Field(() => Post)

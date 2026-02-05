@@ -5,7 +5,8 @@ import {
 } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { Field, ID, ObjectType } from '@nestjs/graphql';
-import { User } from 'src/users/schemas/user.schema';
+import { UserType } from 'src/users/graphql/user.type';
+
 
 @Schema()
 @ObjectType()
@@ -20,8 +21,8 @@ export class Post extends Document {
     content: string;
     
     @Prop({ type: String, ref: 'User', required: true })
-    @Field(() => User)
-    author: User;
+    @Field(() => UserType)
+    author: UserType;
 
     @Prop({ default: Date.now , immutable: true,required:true})
     @Field()

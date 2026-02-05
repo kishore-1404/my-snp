@@ -5,7 +5,7 @@ import {
 } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { Field, ID, ObjectType } from '@nestjs/graphql';
-import { User } from 'src/users/schemas/user.schema';
+import { UserType } from 'src/users/graphql/user.type';
 
 @Schema()
 @ObjectType()
@@ -19,8 +19,8 @@ export class Notification extends Document {
     message: string;
 
     @Prop({ type: String, ref: 'User', required: true })
-    @Field(() => User)
-    recipient: User;
+    @Field(() => UserType)
+    recipient: UserType;
     
     @Prop({ default: false , required:true, type:Boolean})
     @Field()

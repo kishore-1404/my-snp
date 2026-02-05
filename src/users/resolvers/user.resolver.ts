@@ -1,88 +1,78 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { UsersService } from '../users.service';
-import { User } from '../schemas/user.schema';
-import { CreateUserInput } from '../input/create-user.input';
-import { UpdateUserInput } from '../input/update-user.input';
-import { PreferencesInput } from '../input/preferences.input';
-
-import { UpdateUserDto } from '../dto/update-user.dto';
-import { CreateUserDto } from '../dto/create-user.dto';
+import { UserType } from '../graphql/user.type';
+import { CreateUserInput } from '../dto/create-user.input';
+import { UpdateUserInput } from '../dto/update-user.input';
+import { PreferencesInput } from '../dto/preferences.input';
 import { Public } from '../../common/decorators/public.decorator';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { Role } from 'src/common/roles.enum';
+import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 
-@Resolver(of => User)
+@Resolver(() => UserType)
 export class UserResolver {
     constructor(private readonly usersService: UsersService) {}
-    
-    // @Public()
+
     @Roles(Role.Admin)
-    @Query(() => [User], { name: 'getusers' })
-    async users(): Promise<User[]> {
-        return this.usersService.findAll();
+    @Query(() => [UserType], { name: 'getusers' })
+    async users(): Promise<UserType[]> {
+        // Only admin can get all users
+        const users = await this.usersService.findAll();
+        return users.map(u => this.toUserType(u));
     }
 
-    // @Public()
     @Roles(Role.User, Role.Admin)
-    @Query(() => User, { name: 'getuser' })
-    async user(@Args('id') id: string): Promise<User | null> {
-        return this.usersService.findOne(id);
+    @Query(() => UserType, { name: 'getuser' })
+    async user(@CurrentUser() user): Promise<UserType | null> {
+        // Use context for user id, only admin can query by id
+        const foundUser = await this.usersService.findOne(user.id);
+        return foundUser ? this.toUserType(foundUser) : null;
     }
 
-    // @Public()
-    @Roles(Role.User, Role.Admin)               
-    @Mutation(() => User, { name: 'createUser' })
-    async createUser(@Args('createUserInput') createUserInput: CreateUserInput): Promise<User> {
-        const { preferences, ...userData } = createUserInput;
-        let preferencesObj: Record<string, boolean> | undefined;
-
-        if (preferences) {
-            preferencesObj = this.mapPreferences(preferences);
-        }
-
-        const dto: CreateUserDto = {
-            ...userData,
-            preferences: preferencesObj,
-        };
-        return this.usersService.create(dto);
+    @Public()
+    @Mutation(() => UserType, { name: 'createUser' })
+    async createUser(@Args('createUserInput') createUserInput: CreateUserInput): Promise<UserType> {
+        // Registration is public, input is safe
+        const user = await this.usersService.create(createUserInput);
+        return this.toUserType(user);
     }
 
-    private mapPreferences(preferences: PreferencesInput): Record<string, boolean> {
-        const preferencesObj: Record<string, boolean> = {};
-        preferences.keys.forEach((key, idx) => {
-            preferencesObj[key] = preferences.values[idx];
-        });
-        return preferencesObj;
+    @Mutation(() => UserType, { name: 'updateUser' })
+    async updateUser(@CurrentUser() user, @Args('updateUserInput') updateUserInput: UpdateUserInput): Promise<UserType | null> {
+        // Only allow update for current user
+        const updatedUser = await this.usersService.update(updateUserInput, user.id);
+        return updatedUser ? this.toUserType(updatedUser) : null;
     }
 
-    @Mutation(() => User, { name: 'updateUser' })
-    async updateUser(@Args('updateUserInput') updateUserInput: UpdateUserInput): Promise<User | null> {
-        const { preferences, ...userData } = updateUserInput;
-        let preferencesObj: Record<string, boolean> | undefined;
-
-        if (preferences) {
-            preferencesObj = this.mapPreferences(preferences);
-        }
-
-        const updateUserDto: UpdateUserDto = {
-            ...userData,
-            preferences: preferencesObj,
-        };
-        return this.usersService.update(updateUserDto);
-    }
-    
-    @Mutation(() => User, { name: 'deleteUser' })
-    async deleteUser(@Args('id') id: string): Promise<User | null> {
-        return this.usersService.remove(id);
+    @Mutation(() => UserType, { name: 'deleteUser' })
+    async deleteUser(@CurrentUser() user): Promise<UserType | null> {
+        // Use user context for id, do not accept id as input
+        const deletedUser = await this.usersService.remove(user.id);
+        return deletedUser ? this.toUserType(deletedUser) : null;
     }
 
-    @Mutation(() => User, { name: 'updateUserPreferences' })
+    @Mutation(() => UserType, { name: 'updateUserPreferences' })
     async updateUserPreferences(
-        @Args('id') id: string,
+        @CurrentUser() user,
         @Args('preferences', { type: () => PreferencesInput }) preferences: PreferencesInput
-    ): Promise<User | null> {
-        // Convert PreferencesInput to a Map<string, boolean>
-        const preferencesMap = this.mapPreferences(preferences);
-        return this.usersService.updatePreferences(id, preferencesMap);
+    ): Promise<UserType | null> {
+        // Only allow update for current user
+        const updatedUser = await this.usersService.updatePreferences(user.id, preferences);
+        return updatedUser ? this.toUserType(updatedUser) : null;
+    }
+
+
+
+    private toUserType(user: any): UserType {
+        return {
+            id: user._id ? user._id.toString() : user.id,
+            username: user.username,
+            email: user.email,
+            bio: user.bio,
+            preferences: user.preferences,
+            roles: user.roles,
+            createdAt: user.createdAt,
+            updatedAt: user.updateAt,
+        };
     }
 }

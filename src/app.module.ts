@@ -18,7 +18,7 @@ import { NotificationsModule } from './notifications/notifications.module';
 import { AuthModule } from './auth/auth.module';
 
 import { APP_GUARD } from '@nestjs/core';
-import { AuthGuard } from './auth/auth.guard';
+import { AuthGuard } from './auth/guards/auth.guard';
 import { registerEnumType } from '@nestjs/graphql';
 import { Role } from './common/roles.enum';
 // import { registerEnumType } from '@nestjs/graphql';

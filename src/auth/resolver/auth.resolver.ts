@@ -3,7 +3,7 @@ import { AuthService } from '../auth.service';
 import { LoginInputDto } from '../input/login.input';
 import { UseGuards } from '@nestjs/common';
 import { Query, Context } from '@nestjs/graphql';
-import { AuthGuard } from '../auth.guard';
+import { AuthGuard } from '../guards/auth.guard';
 import { Public } from 'src/common/decorators/public.decorator';
 // import { Context } from '@nestjs/graphql';
 

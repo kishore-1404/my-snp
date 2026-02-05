@@ -1,57 +1,39 @@
-import {
-    Prop,
-    Schema,
-    SchemaFactory,
-} from '@nestjs/mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import { Field, ID, ObjectType } from '@nestjs/graphql';
-import GraphQLJSON from 'graphql-type-json';
 import { Role } from 'src/common/roles.enum';
-
-
+import { Types } from 'mongoose';
 @Schema()
-@ObjectType()
 export class User extends Document {
-    @Field(() => ID)
-    get id() {
+    get_id() {
         return this._id.toString();
     }
-    
+
     @Prop({ required: true, unique: true })
-    @Field()
     username: string;
 
     @Prop({ required: true, unique: true })
-    @Field()
     email: string;
 
     @Prop({ required: true })
-    // @Field()
     password: string;
 
     @Prop()
-    @Field({ nullable: true })
     bio?: string;
 
-    @Prop({type: Map, of:Boolean, default: {}})
-    @Field(() => GraphQLJSON, { nullable: true })
+    @Prop({ type: Map, of: Boolean, default: {} })
     preferences: Record<string, boolean>;
 
     @Prop({ type: [String], default: ['user'] })
-    @Field(() => [Role])
     roles: Role[];
 
-    @Prop({ default: Date.now , immutable: true,required:true})
-    @Field()
+    @Prop({ default: Date.now, immutable: true, required: true })
     createdAt: Date;
-    
 
-    @Prop({ default: Date.now , required:true})
-    @Field()
+    @Prop({ default: Date.now, required: true })
     updateAt: Date;
-
-
 }
 
+
 export const UserSchema = SchemaFactory.createForClass(User);
+
 UserSchema.set('timestamps', { createdAt: 'createdAt', updatedAt: 'updateAt' });

@@ -3,7 +3,7 @@
 # ------------------------------------------------------
 
 type Comment {
-  author: User!
+  author: UserType!
   content: String!
   createdAt: DateTime!
   isDeleted: Boolean!
@@ -12,7 +12,6 @@ type Comment {
 }
 
 input CreateCommentDto {
-  authorId: String!
   content: String!
   postId: String!
 }
@@ -60,16 +59,16 @@ input LoginInputDto {
 
 type Mutation {
   createNotification(createNotificationDto: CreateNotificationDto!): Notification!
-  createUser(createUserInput: CreateUserInput!): User!
+  createUser(createUserInput: CreateUserInput!): UserType!
   createcomment(createCommentDto: CreateCommentDto!): Comment!
   createpost(createPostDto: CreatePostDto!): Post!
   createreaction(createReactionDto: CreateReactionDto!): Reaction!
-  deleteUser(id: String!): User!
+  deleteUser: UserType!
   deletecomment(id: String!): Comment!
   deletepost(id: String!): Post!
   login(loginInput: LoginInputDto!): String!
-  updateUser(updateUserInput: UpdateUserInput!): User!
-  updateUserPreferences(id: String!, preferences: PreferencesInput!): User!
+  updateUser(updateUserInput: UpdateUserInput!): UserType!
+  updateUserPreferences(preferences: PreferencesInput!): UserType!
   updatecomment(updateCommentDto: UpdateCommentDto!): Comment!
   updatepost(updatePostDto: UpdatePostDto!): Post!
   updatereaction(updateReactionDto: UpdateReactionDto!): Reaction!
@@ -80,11 +79,11 @@ type Notification {
   id: ID!
   isRead: Boolean!
   message: String!
-  recipient: User!
+  recipient: UserType!
 }
 
 type Post {
-  author: User!
+  author: UserType!
   content: String!
   createdAt: DateTime!
   id: ID!
@@ -105,8 +104,8 @@ type Query {
   getposts: [Post!]!
   getreaction(id: String!): Reaction!
   getreactions: [Reaction!]!
-  getuser(id: String!): User!
-  getusers: [User!]!
+  getuser: UserType!
+  getusers: [UserType!]!
 }
 
 type Reaction {
@@ -114,7 +113,7 @@ type Reaction {
   post: Post!
   type: String!
   updateAt: DateTime!
-  user: User!
+  user: UserType!
 }
 
 enum Role {
@@ -129,7 +128,6 @@ type Subscription {
 }
 
 input UpdateCommentDto {
-  authorId: String
   content: String
   id: ID!
   postId: String
@@ -158,13 +156,13 @@ input UpdateUserInput {
   username: String
 }
 
-type User {
+type UserType {
   bio: String
   createdAt: DateTime!
   email: String!
   id: ID!
   preferences: JSON
-  roles: [Role!]!
-  updateAt: DateTime!
+  roles: [String!]!
+  updatedAt: DateTime!
   username: String!
 }

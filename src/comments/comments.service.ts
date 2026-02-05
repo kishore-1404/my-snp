@@ -19,8 +19,8 @@ export class CommentsService {
         return this.commentModel.findOne({ _id: id, isDeleted: false }).exec();
     }
     
-    async create(createCommentDto: CreateCommentDto): Promise<Comment> {
-        const createdComment = new this.commentModel(createCommentDto);
+    async create(createCommentDto: CreateCommentDto, authorId: string): Promise<Comment> {
+        const createdComment = new this.commentModel({ ...createCommentDto, author: authorId });
         return createdComment.save();
     }
 
@@ -33,7 +33,7 @@ export class CommentsService {
         ).exec();
     }
 
-    async remove(id: string): Promise<Comment | null> {
+    async remove(id: string, authorId: string): Promise<Comment | null> {
         return this.commentModel.findOneAndUpdate(
             { _id: id, isDeleted: false },
             { isDeleted: true },

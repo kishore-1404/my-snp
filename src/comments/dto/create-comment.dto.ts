@@ -7,12 +7,7 @@ export class CreateCommentDto {
     @IsNotEmpty()
     @IsString()
     content: string;
-
-    @Field()
-    @IsNotEmpty()
-    @IsString()
-    authorId: string;
-
+    
     @Field()
     @IsNotEmpty()
     @IsString()
