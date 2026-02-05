@@ -1,5 +1,4 @@
 import { Args, Mutation, Query,Resolver,ResolveField } from '@nestjs/graphql';
-import { Res, UseGuards } from '@nestjs/common';
 import { FollowsService } from '../follows.service';
 import { FollowType } from '../graphql/follow.type';
 import { FollowUserDto } from '../dto/create-follow.input';

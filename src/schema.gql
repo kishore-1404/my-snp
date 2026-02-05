@@ -55,6 +55,19 @@ input FollowUserDto {
   followingId: String!
 }
 
+type FollowerWithDetails {
+  followId: ID!
+  followedAt: DateTime!
+  isFollowingBack: Boolean!
+  userId: ID!
+  username: String!
+}
+
+type FollowersWithDetailsResponse {
+  followers: [FollowerWithDetails!]!
+  totalCount: Int!
+}
+
 """
 The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
 """
@@ -106,8 +119,10 @@ input PreferencesInput {
 
 type Query {
   getFollowers(userId: String!): [FollowType!]!
+  getFollowersWithDetails(limit: Int, skip: Int, userId: String!): FollowersWithDetailsResponse!
   getFollowing(userId: String!): [FollowType!]!
   getProfile: String!
+  getSuggestedUsers(limit: Int, userId: String!): SuggestedUsersResponse!
   getcomment(id: String!): CommentType!
   getcomments: [CommentType!]!
   getpost(id: String!): PostType!
@@ -125,6 +140,18 @@ type Subscription {
   notificationAdded(recipientId: String!): Notification!
   postCreated: PostType!
   postUpdated: PostType!
+}
+
+type SuggestedUser {
+  commonConnections: Int!
+  connectedThrough: [ID!]!
+  userId: ID!
+  username: String!
+}
+
+type SuggestedUsersResponse {
+  totalCount: Int!
+  users: [SuggestedUser!]!
 }
 
 input UpdateCommentDto {
