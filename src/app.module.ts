@@ -42,7 +42,7 @@ registerEnumType(Role, { name: 'Role' });
     UsersModule,
     PostsModule,
     CommentsModule,
-    ReactionsModule,
+    // ReactionsModule,
     NotificationsModule,
     AuthModule,
   ],

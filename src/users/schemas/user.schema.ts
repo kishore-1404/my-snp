@@ -30,7 +30,7 @@ export class User extends Document {
     createdAt: Date;
 
     @Prop({ default: Date.now, required: true })
-    updateAt: Date;
+    updatedAt: Date;
 }
 
 

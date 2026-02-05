@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Comment } from './schemas/comment.schema';
+import { CommentType } from './graphql/comment.type';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 
@@ -18,7 +19,7 @@ export class CommentsService {
     async findOne(id: string): Promise<Comment | null> {
         return this.commentModel.findOne({ _id: id, isDeleted: false }).exec();
     }
-    
+
     async create(createCommentDto: CreateCommentDto, authorId: string): Promise<Comment> {
         const createdComment = new this.commentModel({ ...createCommentDto, author: authorId });
         return createdComment.save();
@@ -33,12 +34,9 @@ export class CommentsService {
         if (existing.author.toString() !== authorId) {
             return null;
         }
-        // Ensure author field is set in update (optional, but for consistency)
-        // updateData.author = authorId;
         return this.commentModel.findOneAndUpdate(
             { _id: id, isDeleted: false, author: authorId },
             updateData,
-
             { new: true }
         ).exec();
     }
@@ -54,5 +52,18 @@ export class CommentsService {
             { new: true }
         ).exec();
     }
+
+    // Helper to map Comment (Mongoose) to CommentType (GraphQL)
+    // toCommentType(comment: any): CommentType {
+    //     return {
+    //         id: comment._id.toString(),
+    //         content: comment.content,
+    //         author: comment.author,
+    //         post: comment.post,
+    //         createdAt: comment.createdAt,
+    //         updatedAt: comment.updatedAt,
+    //         isDeleted: comment.isDeleted,
+    //     };
+    // }
 }
 

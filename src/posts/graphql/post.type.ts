@@ -1,4 +1,5 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { Types } from 'mongoose';
 import { UserType } from 'src/users/graphql/user.type';
 
 @ObjectType()
@@ -10,7 +11,7 @@ export class PostType {
   content: string;
 
   @Field(() => UserType)
-  author: UserType;
+  author: UserType | Types.ObjectId; // Object ID is only for internal purposes, GraphQL will always return the populated UserType
 
   @Field()
   createdAt: Date;

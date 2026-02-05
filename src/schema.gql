@@ -2,13 +2,14 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type Comment {
+type CommentType {
   author: UserType!
   content: String!
   createdAt: DateTime!
+  id: ID!
   isDeleted: Boolean!
-  post: Post!
-  updateAt: DateTime!
+  post: PostType!
+  updatedAt: DateTime!
 }
 
 input CreateCommentDto {
@@ -23,14 +24,7 @@ input CreateNotificationDto {
 }
 
 input CreatePostDto {
-  authorId: String!
   content: String!
-}
-
-input CreateReactionDto {
-  content: String!
-  postId: String!
-  userId: String!
 }
 
 input CreateUserInput {
@@ -60,18 +54,16 @@ input LoginInputDto {
 type Mutation {
   createNotification(createNotificationDto: CreateNotificationDto!): Notification!
   createUser(createUserInput: CreateUserInput!): UserType!
-  createcomment(createCommentDto: CreateCommentDto!): Comment!
-  createpost(createPostDto: CreatePostDto!): Post!
-  createreaction(createReactionDto: CreateReactionDto!): Reaction!
+  createcomment(createCommentDto: CreateCommentDto!): CommentType!
+  createpost(createPostDto: CreatePostDto!): PostType!
   deleteUser: UserType!
-  deletecomment(id: String!): Comment!
-  deletepost(id: String!): Post!
+  deletecomment(id: String!): CommentType!
+  deletepost(id: String!): PostType!
   login(loginInput: LoginInputDto!): String!
   updateUser(updateUserInput: UpdateUserInput!): UserType!
   updateUserPreferences(preferences: PreferencesInput!): UserType!
-  updatecomment(updateCommentDto: UpdateCommentDto!): Comment!
-  updatepost(updatePostDto: UpdatePostDto!): Post!
-  updatereaction(updateReactionDto: UpdateReactionDto!): Reaction!
+  updatecomment(updateCommentDto: UpdateCommentDto!): CommentType!
+  updatepost(updatePostDto: UpdatePostDto!): PostType!
 }
 
 type Notification {
@@ -82,13 +74,13 @@ type Notification {
   recipient: UserType!
 }
 
-type Post {
+type PostType {
   author: UserType!
   content: String!
   createdAt: DateTime!
   id: ID!
   isDeleted: Boolean!
-  updateAt: DateTime!
+  updatedAt: DateTime!
 }
 
 input PreferencesInput {
@@ -98,22 +90,12 @@ input PreferencesInput {
 
 type Query {
   getProfile: String!
-  getcomment(id: String!): Comment!
-  getcomments: [Comment!]!
-  getpost(id: String!): Post!
-  getposts: [Post!]!
-  getreaction(id: String!): Reaction!
-  getreactions: [Reaction!]!
+  getcomment(id: String!): CommentType!
+  getcomments: [CommentType!]!
+  getpost(id: String!): PostType!
+  getposts: [PostType!]!
   getuser: UserType!
   getusers: [UserType!]!
-}
-
-type Reaction {
-  createdAt: DateTime!
-  post: Post!
-  type: String!
-  updateAt: DateTime!
-  user: UserType!
 }
 
 enum Role {
@@ -123,8 +105,8 @@ enum Role {
 
 type Subscription {
   notificationAdded(recipientId: String!): Notification!
-  postCreated: Post!
-  postUpdated: Post!
+  postCreated: PostType!
+  postUpdated: PostType!
 }
 
 input UpdateCommentDto {
@@ -134,16 +116,8 @@ input UpdateCommentDto {
 }
 
 input UpdatePostDto {
-  authorId: String
   content: String
   id: ID!
-}
-
-input UpdateReactionDto {
-  content: String
-  id: ID!
-  postId: String
-  userId: String
 }
 
 input UpdateUserInput {
