@@ -1,41 +1,26 @@
-import {
-    Prop,
-    Schema,
-    SchemaFactory,
-} from '@nestjs/mongoose';
-import { Document } from 'mongoose';
-import { Field, ID, ObjectType } from '@nestjs/graphql';
-import { UserType } from 'src/users/graphql/user.type'; 
-import { Post } from 'src/posts/schemas/post.schema';
+
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document, Types } from 'mongoose';
 
 @Schema()
-@ObjectType()
 export class Comment extends Document {
-
     @Prop({ required: true })
-    @Field()
     content: string;
-    
-    @Prop({ type: String, ref: 'User', required: true })
-    @Field(() => UserType)
-    author: UserType;
-        
-    @Prop({ type: String, ref: 'Post', required: true })
-    @Field(() => Post)
-    post: Post;
 
-    @Prop({ default: Date.now , immutable: true,required:true})
-    @Field()
+    @Prop({ type: Types.ObjectId, ref: 'User', required: true })
+    author: Types.ObjectId;
+
+    @Prop({ type: Types.ObjectId, ref: 'Post', required: true })
+    post: Types.ObjectId;
+
+    @Prop({ default: Date.now, immutable: true, required: true })
     createdAt: Date;
-    
-    @Prop({ default: Date.now , required:true})
-    @Field()
-    updateAt: Date;
 
-    @Prop({ default: false , required:true, type:Boolean})
-    @Field()
+    @Prop({ default: Date.now, required: true })
+    updatedAt: Date;
+
+    @Prop({ default: false, required: true, type: Boolean })
     isDeleted: boolean;
-
 }
 
 export const CommentSchema = SchemaFactory.createForClass(Comment);

@@ -24,20 +24,35 @@ export class CommentsService {
         return createdComment.save();
     }
 
-    async update(updateCommentDto: UpdateCommentDto): Promise<Comment | null> {
+    async update(updateCommentDto: UpdateCommentDto, authorId: string): Promise<Comment | null> {
         const { id, ...updateData } = updateCommentDto;
+        // Find the comment first
+        const existing = await this.commentModel.findOne({ _id: id, isDeleted: false }).exec();
+        if (!existing) return null;
+        // Check author
+        if (existing.author.toString() !== authorId) {
+            return null;
+        }
+        // Ensure author field is set in update (optional, but for consistency)
+        // updateData.author = authorId;
         return this.commentModel.findOneAndUpdate(
-            { _id: id, isDeleted: false },
+            { _id: id, isDeleted: false, author: authorId },
             updateData,
+
             { new: true }
         ).exec();
     }
 
     async remove(id: string, authorId: string): Promise<Comment | null> {
+        let deletedComment = await this.commentModel.findOne({ _id: id, isDeleted: false, author: authorId }).exec();
+        if (!deletedComment || deletedComment.author.toString() !== authorId) {
+            return null; // Not found or not the author
+        }
         return this.commentModel.findOneAndUpdate(
-            { _id: id, isDeleted: false },
+            { _id: id, isDeleted: false, author: authorId },
             { isDeleted: true },
             { new: true }
         ).exec();
     }
 }
+

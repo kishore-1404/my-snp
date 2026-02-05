@@ -30,7 +30,7 @@ export class CommentResolver {
     @Mutation(() => Comment, { name: 'updatecomment' })
     async updateComment(@CurrentUser() user, @Args('updateCommentDto') updateCommentDto: UpdateCommentDto): Promise<Comment | null> {
         // Only allow update for current user's comment
-        return this.commentsService.update(updateCommentDto);
+        return this.commentsService.update(updateCommentDto, user.id);
     }
     
     @Mutation(() => Comment, { name: 'deletecomment' })
