@@ -1,11 +1,14 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import configuration from './config/configuration';
+import { validate } from './config/env.validation';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
-import {ConfigModule} from "@nestjs/config";
-import {MongooseModule} from "@nestjs/mongoose";
-import {GraphQLModule} from "@nestjs/graphql";
-import { ApolloDriver,ApolloDriverConfig } from '@nestjs/apollo';
+
+import { MongooseModule } from "@nestjs/mongoose";
+import { GraphQLModule } from "@nestjs/graphql";
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 import { join } from 'path';
 import { UsersModule } from './users/users.module';
@@ -26,8 +29,18 @@ import { FollowsModule } from './follows/follows.module';
 registerEnumType(Role, { name: 'Role' });
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
-    MongooseModule.forRoot(process.env.MONGO_URI!),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [configuration],
+      validate,
+    }),
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        uri: configService.get<string>('database.uri'),
+      }),
+    }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
@@ -38,7 +51,7 @@ registerEnumType(Role, { name: 'Role' });
         'graphql-ws': true,
       },
       context: ({ req, res }) => ({ req, res })
-      }),
+    }),
 
     UsersModule,
     PostsModule,
@@ -53,7 +66,7 @@ registerEnumType(Role, { name: 'Role' });
     {
       provide: APP_GUARD,
       useClass: AuthGuard,
-},
+    },
   ],
 })
-export class AppModule {}
+export class AppModule { }

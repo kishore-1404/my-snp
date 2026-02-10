@@ -4,7 +4,7 @@ import { UsersModule } from 'src/users/users.module';
 import { AuthResolver } from './resolver/auth.resolver';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { tokenExpiry } from './constants/auth.constant';
+
 
 @Module({
   imports: [
@@ -14,12 +14,14 @@ import { tokenExpiry } from './constants/auth.constant';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_SECRET'),
-        signOptions: { expiresIn: tokenExpiry },
+        secret: configService.get<string>('jwt.secret'),
+        signOptions: {
+          expiresIn: configService.get('jwt.expiresIn'),
+        },
       }),
     }),
   ],
   providers: [AuthService, AuthResolver],
   exports: [AuthService],
 })
-export class AuthModule {}
+export class AuthModule { }
