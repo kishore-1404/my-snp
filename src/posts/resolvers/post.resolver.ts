@@ -9,7 +9,7 @@ import { UsersService } from 'src/users/users.service';
 import { UserType } from 'src/users/graphql/user.type';
 import { UsersMapper } from 'src/users/users.mapper';
 import { PostsMapper } from '../posts.mapper';
-import { FeedPostType,FeedResponse } from '../graphql/feed-post.type';
+import { FeedPostType, FeedResponse } from '../graphql/feed-post.type';
 // Use 'any' type to avoid type error with asyncIterator
 const pubSub = new PubSub();
 
@@ -20,8 +20,8 @@ export class PostResolver {
         private readonly postsMapper: PostsMapper,
         private readonly usersService: UsersService,
         private readonly usersMapper: UsersMapper
-    ) {}
-    
+    ) { }
+
     @Query(() => [PostType], { name: 'getposts' })
     async posts(): Promise<PostType[]> {
         const posts = await this.postsService.findAll();
@@ -39,7 +39,7 @@ export class PostResolver {
         @Args('createPostDto') createPostDto: CreatePostDto,
         @CurrentUser() user: any
     ): Promise<PostType> {
-        const post = await this.postsService.create(createPostDto, user._id);
+        const post = await this.postsService.create(createPostDto, user.id);
         return this.postsMapper.toPostType(post);
     }
 
@@ -53,7 +53,7 @@ export class PostResolver {
         @Args('updatePostDto') updatePostDto: UpdatePostDto,
         @CurrentUser() user: any
     ): Promise<PostType | null> {
-        const post = await this.postsService.update(updatePostDto, user._id);
+        const post = await this.postsService.update(updatePostDto, user.id);
         return post ? this.postsMapper.toPostType(post) : null;
     }
 
@@ -85,7 +85,7 @@ export class PostResolver {
         @Args('page', { type: () => Number, defaultValue: 1 }) page: number,
         @Args('limit', { type: () => Number, defaultValue: 20 }) limit: number
     ): Promise<FeedResponse> {
-        const result = await this.postsService.getFeed(user._id, page, limit);
+        const result = await this.postsService.getFeed(user.id, page, limit);
         return {
             posts: Array.isArray(result.posts) ? result.posts.map(p => this.postsMapper.toFeedPostType(p)) : [],
             total: result.total,
