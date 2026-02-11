@@ -15,30 +15,31 @@ export class AuthGuard implements CanActivate {
         private reflector: Reflector,
     ) {}
 
-    async canActivate(context: ExecutionContext): Promise<boolean> {
+    
+    // src/auth/guards/auth.guard.ts
 
-        const isPublic = this.reflector.getAllAndOverride<boolean>('isPublic', [
-            context.getHandler(),
-            context.getClass(),
-        ]); 
-        if (isPublic) {
-            return true;
-        }
-        const ctx = GqlExecutionContext.create(context);
-        const req: Request & { user?: any } = ctx.getContext().req;
+async canActivate(context: ExecutionContext): Promise<boolean> {
+    const isPublic = this.reflector.getAllAndOverride<boolean>('isPublic', [
+        context.getHandler(),
+        context.getClass(),
+    ]);
+    if (isPublic) return true;
 
-        const authHeader = req.headers['authorization'];
-        if (!authHeader) {
-            throw new UnauthorizedException('No authorization header found');
-        }
+    // Fix: Handle both REST (HTTP) and GraphQL contexts
+    const req = context.getType() === 'http' 
+        ? context.switchToHttp().getRequest() 
+        : GqlExecutionContext.create(context).getContext().req;
 
-        const [, token] = authHeader.split(' ');
-        try {
-            const decoded = await this.jwtService.verifyAsync(token);
-            req.user = decoded;
-            return true;
-        } catch (err) {
-            throw new UnauthorizedException('Invalid or expired token');
-        }
+    const authHeader = req.headers['authorization'];
+    if (!authHeader) throw new UnauthorizedException('No authorization header found');
+
+    const [, token] = authHeader.split(' ');
+    try {
+        const decoded = await this.jwtService.verifyAsync(token);
+        req.user = decoded; // Attaches the JWT payload to the request
+        return true;
+    } catch (err) {
+        throw new UnauthorizedException('Invalid or expired token');
     }
+}
 }

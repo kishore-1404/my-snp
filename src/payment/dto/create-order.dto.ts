@@ -6,16 +6,16 @@ export class CreateOrderDto {
     orderAmount: number;
 
     @IsString()
-    @IsNotEmpty()
+    // @IsNotEmpty()
     orderCurrency: string = 'INR';
 
     @IsString()
     @IsNotEmpty()
-    customerId: string;
+    customerPhone: string;
 
     @IsString()
-    @IsNotEmpty()
-    customerPhone: string;
+    @IsOptional()
+    customerEmail?: string;
 
     @IsString()
     @IsOptional()

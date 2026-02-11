@@ -26,6 +26,9 @@ export class EnvironmentVariables {
 
     @IsString()
     CASHFREE_SECRET_KEY: string;
+
+    @IsString()
+    FRONTEND_URL: string;
 }
 
 export function validate(config: Record<string, unknown>) {

@@ -11,5 +11,7 @@ export default () => ({
     cashfree: {
         appId: process.env.CASHFREE_APP_ID,
         secretKey: process.env.CASHFREE_SECRET_KEY,
-    }
+    },
+    frontendUrl: process.env.FRONTEND_URL,
+
 });
