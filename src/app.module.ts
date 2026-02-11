@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { LoggerModule } from 'nestjs-pino';
 import configuration from './config/configuration';
 import { validate } from './config/env.validation';
 import { AppController } from './app.controller';
@@ -26,6 +27,7 @@ import { registerEnumType } from '@nestjs/graphql';
 import { Role } from './common/roles.enum';
 // import { registerEnumType } from '@nestjs/graphql';
 import { FollowsModule } from './follows/follows.module';
+import { PaymentModule } from './payment/payment.module';
 registerEnumType(Role, { name: 'Role' });
 @Module({
   imports: [
@@ -53,6 +55,22 @@ registerEnumType(Role, { name: 'Role' });
       context: ({ req, res }) => ({ req, res })
     }),
 
+    LoggerModule.forRoot({
+      pinoHttp: {
+        transport: process.env.NODE_ENV !== 'production'
+          ? {
+            target: 'pino-pretty',
+            options: {
+              singleLine: true,
+            },
+          }
+          : undefined,
+        redact: {
+          paths: ['req.headers.authorization', 'req.body.password'],
+          censor: '***',
+        },
+      },
+    }),
     UsersModule,
     PostsModule,
     CommentsModule,
@@ -60,6 +78,7 @@ registerEnumType(Role, { name: 'Role' });
     NotificationsModule,
     AuthModule,
     FollowsModule,
+    PaymentModule,
   ],
   controllers: [AppController],
   providers: [AppService,
