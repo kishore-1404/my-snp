@@ -21,8 +21,9 @@ import { ReactionsModule } from './reactions/reactions.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { AuthModule } from './auth/auth.module';
 
-import { APP_GUARD } from '@nestjs/core';
+import { APP_GUARD, APP_FILTER } from '@nestjs/core';
 import { AuthGuard } from './auth/guards/auth.guard';
+import { AllExceptionsFilter } from './common/filters/http-exception.filter';
 import { registerEnumType } from '@nestjs/graphql';
 import { Role } from './common/roles.enum';
 // import { registerEnumType } from '@nestjs/graphql';
@@ -86,6 +87,10 @@ registerEnumType(Role, { name: 'Role' });
       provide: APP_GUARD,
       useClass: AuthGuard,
     },
+    {
+      provide: APP_FILTER,
+      useClass: AllExceptionsFilter,
+    }
   ],
 })
 export class AppModule { }

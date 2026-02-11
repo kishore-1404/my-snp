@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Cashfree, CFEnvironment } from 'cashfree-pg';
 import { CreateOrderDto } from './dto/create-order.dto';
@@ -18,8 +18,8 @@ export class PaymentService {
         private configService: ConfigService,
         @InjectModel(Order.name) private orderModel: Model<Order>
     ) {
-        const XClientId = this.configService.getOrThrow<string>('cashfree.appId');
-        const XClientSecret = this.configService.getOrThrow<string>('cashfree.secretKey');
+        const XClientId: string = this.configService.getOrThrow<string>('cashfree.appId');
+        const XClientSecret: string = this.configService.getOrThrow<string>('cashfree.secretKey');
         // const XEnvironment = this.configService.getOrThrow<string>('cashfree.environment');
         this.frontendUrl = this.configService.getOrThrow<string>('frontendUrl');
 
@@ -98,7 +98,10 @@ export class PaymentService {
             );
 
             return orderData;
-        } catch (error) {
+        } catch (error: any) {
+            if (error.response?.status === 404) {
+                throw new NotFoundException(`Order with ID ${orderId} not found`);
+            }
             throw new InternalServerErrorException(error.message);
         }
     }
